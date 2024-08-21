@@ -8,6 +8,9 @@ setup(
     description      ='Initial',
     author           ='Duckling Dean',
     author_email     ='duckling.dean@proton.me',
+    package_dir      ={'': 'src'},
+    packages         =find_packages(where='src'),
+    include_package_data=True,
     project_urls     ={
         "Source" : "https://github.com/DucklingDean/reqio",
     },
