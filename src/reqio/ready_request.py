@@ -3,10 +3,6 @@ from fake_useragent import UserAgent
 
 
 
-def gen_headers() -> dict[str,str]:
-        return {
-                    "user-agent":UserAgent().random,
-               }
 
 
 class ReadyRequest:
@@ -33,4 +29,8 @@ class ReadyRequest:
             )
         return self._req
 
+    def gen_headers() -> dict[str,str]:
+        return {
+                    "user-agent":UserAgent().random,
+               }
 
