@@ -4,7 +4,7 @@ from hashlib  import sha1, sha256, sha512, md5
 
 
 
-from reqio.toolkit import NamingFunctions
+from reqio.toolkit     import NamingFunctions
 from testlib.fake      import FakeReadyRequest
 
 
@@ -26,5 +26,18 @@ class TestNamingFunctions(TestCase):
         ]
         for method, row_method in methods:
             self.assertEqual(method(request), TestNamingFunctions.hex(row_method, request.url.encode()))
+
+
+
+    def test_url_hashsum_file_extension(self) -> None:
+        nf = NamingFunctions(file_extension=".html")
+        methods = [
+            [nf.url_md5sum   , md5],
+            [nf.url_sha1sum  , sha1],
+            [nf.url_sha256sum, sha256],
+            [nf.url_sha512sum, sha512],
+        ]
+        for method, row_method in methods:
+            self.assertEqual(method(request), TestNamingFunctions.hex(row_method, request.url.encode())+'.html')
 
 
