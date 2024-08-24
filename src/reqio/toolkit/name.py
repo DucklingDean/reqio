@@ -40,6 +40,12 @@ class NamingFunctions:
 
 
 
+    @_add_file_extension 
+    def by_order_zfill(request:ReadyRequest) -> str:
+        return str(request.order).zfill(6)
+
+
+
     @_add_file_extension
     def response_md5sum(request:ReadyRequest) -> str:
         return md5(request.response.content).hexdigest()
