@@ -17,6 +17,11 @@ class CorePool:
     _SAVE_LOCK    = Lock()
     _tasks_queue  = Queue()
 
+    _response_dict = {}
+    _response_list = []
+
+
+
 
     # _handle_img_error:Callable = lambda error: None # sorry but you need to monkey patch this function. :(
 
@@ -31,9 +36,9 @@ class CorePool:
         main_path          : str  = './',
         save_files         : bool = True,  # if you disable this option the pool will not write to the disk
         save_in_list       : bool = False, # if you enable this choice the pool will save all requests in a queue
+        save_in_dict       : bool = False,
         naming_function    : Callable|None = None,
         order_start_value  : int = 0,
-        respect_order      : bool = False, # not useful yet
     ) -> None:
 
         # Pool
@@ -55,10 +60,8 @@ class CorePool:
         self._save_files   = save_files
 
         self._save_in_list = save_in_list
-        if self._save_in_list:
-            self._response_list = []
-
-        self._respect_order = respect_order
+        self._save_in_dict = save_in_dict
+            
 
 
     def is_alive(self) -> bool:
@@ -118,6 +121,9 @@ class CorePool:
         if self._save_in_list:
             self._response_list.append(request.response.content)
 
+        if self._save_in_dict:
+            self._response_dict[str(request.order).zfill(10)] = request.response.content
+
         self._SAVE_LOCK.release()
 
 
@@ -144,6 +150,7 @@ class CorePool:
                     self._POOL_LOCK.release()
                     sleep(0.7)
             except Exception as ex:
+                print(ex)
                 self._POOL_LOCK.release()
 
 
@@ -152,6 +159,25 @@ class CorePool:
         #self._POOL_LOCK.acquire()
         self._POOL[pool_index] = True
         #self._POOL_LOCK.release()
+
+
+
+    @property
+    def dict(self) -> dict:
+        if self._save_in_dict:
+            return {
+                key:self._response_dict[key] 
+                for key in sorted(self._response_dict.keys())
+            }
+        raise AttributeError("You did not set 'save_in_dict' to True")
+
+
+    @property
+    def list(self) -> list:
+        if self._save_in_list:return self._response_list
+        raise AttributeError("You did not set 'save_in_list' to True")
+
+
 
 
 
